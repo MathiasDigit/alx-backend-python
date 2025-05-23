@@ -49,4 +49,4 @@ def batch_processing(batch_size):
         filtered = [user for user in batch if user['age'] > 25]
         for user in filtered:
             print(user)
-        yield filtered
+        return filtered
