@@ -28,8 +28,8 @@ def paginate_users(page_size, offset):
             (page_size, offset)
         )
         return cursor.fetchall()
-    except Exception as e:
-        print(f"An error occurred while fetching users: {e}")
+    except Exception as error:
+        print(f"An error occurred while fetching users: {error}")
         return []
     finally:
         cursor.close()

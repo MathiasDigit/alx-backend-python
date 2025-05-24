@@ -33,8 +33,8 @@ def stream_users_in_batches(batch_size):
             if not batch:
                 break
             yield batch
-    except Exception as e:
-        print(f"Failed to retrieve batches: {e}")
+    except Exception as error:
+        print(f"Failed to retrieve batches: {error}")
     finally:
         cursor.close()
         db.close()
