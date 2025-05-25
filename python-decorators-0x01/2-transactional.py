@@ -1,7 +1,3 @@
-"""
-Create a decorator that automatically handles database transactions, 
-committing changes on success or rolling back in case of an error.
-"""
 import sqlite3
 import functools
 
