@@ -4,8 +4,6 @@ import functools
 
 
 #### decorator to lof SQL queries
-
-""" YOUR CODE GOES HERE"""
 def log_queries(func):
     """Decorator that logs the SQL query before the function runs."""
     @functools.wraps(func)
