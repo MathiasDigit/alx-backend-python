@@ -1,6 +1,7 @@
 # Decorator that logs the SQL query before executing the function
 import sqlite3
 import functools
+from datetime import datetime
 
 #### decorator to lof SQL queries
 
