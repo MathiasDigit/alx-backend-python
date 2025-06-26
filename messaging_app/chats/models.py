@@ -1,10 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser 
-import uuid
-["email", "password", "first_name", "last_name"]
-
-
-
 
 # Create your models here.
 class User(AbstractUser):
