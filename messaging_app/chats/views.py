@@ -5,17 +5,17 @@ from .serializers import UserSerializer, ConversationSerializer, MessageSerializ
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 # Create your views here.
-class UserViewset(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-class MesssageViewset(viewsets.ModelViewSet):
+class MesssageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-class ConvesationViewset(viewsets.ModelViewSet):
+class ConvesationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
