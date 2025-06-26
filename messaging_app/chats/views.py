@@ -4,6 +4,8 @@ from django_filters import rest_framework as filters
 from .models import User, Conversation, Message
 from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
 
+["class ConversationViewSet", "class MessageViewSet"]
+
 # Create your views here.
 class MesssageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
@@ -13,4 +15,6 @@ class MesssageViewSet(viewsets.ModelViewSet):
 class ConvesationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+
+
     
