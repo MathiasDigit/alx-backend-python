@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class MessageSerializer(serializers.ModelSerializer):
+    sender_id = serializers.CharField(source='sender_id.user_id', read_only=True)
     sender = serializers.SerializerMethodField()
 
     def get_sender(self, obj):
