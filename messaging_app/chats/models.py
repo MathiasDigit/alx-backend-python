@@ -1,6 +1,6 @@
-from django.contrib.auth.models import AbstractUser 
 from django.db import models
-from django.conf import settings
+from django.contrib.auth.models import AbstractUser 
+
 
 
 
@@ -14,15 +14,15 @@ class User(AbstractUser):
     
 class Conversation(models.Model):
     conversation_id = models.BigAutoField(primary_key=True)
-    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='conversations')
+    participants = models.ManyToManyField(User, related_name='conversations')
     created_at = models.DateTimeField(auto_now_add=True)
 
     
 class Message(models.Model):
     message_id = models.BigAutoField(primary_key=True)
-    sender_id =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='messages')
+    sender_id =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages')
     conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    message_body = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=True)
 
