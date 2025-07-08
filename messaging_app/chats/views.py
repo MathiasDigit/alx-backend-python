@@ -4,11 +4,11 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 
 # Create your views here.
-class MesssageViewSet(viewsets.ModelViewSet):
+class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     
-class ConvesationViewSet(viewsets.ModelViewSet):
+class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
 
