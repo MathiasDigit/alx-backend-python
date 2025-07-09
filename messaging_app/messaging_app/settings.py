@@ -135,9 +135,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'chats.pagination.CustomPagination',
     'PAGE_SIZE': 20,
-    'DEFAULT_FILTER_BACKENDS': ['django_filter.rest_framework.DjangoFilterBackned'],
-
+    'DEFAULT_FILTER_BACKENDS': ['django_filter.rest_framework.DjangoFilterBackned'],    
 }
+["PageNumberPagination"],
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
