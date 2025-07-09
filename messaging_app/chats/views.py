@@ -7,6 +7,7 @@ from .permissions import IsParticipantOfConversation
 from .filters import MessageFilter
 from .pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import PermissionDenied
 
 # Create your views here.
 class MessageViewSet(viewsets.ModelViewSet):
@@ -18,8 +19,20 @@ class MessageViewSet(viewsets.ModelViewSet):
     filterset_class = MessageFilter  # Apply custom filter clas
     
     def get_queryset(self):
-        user = self.request.user 
-        return Message.objects.filter(sender=user) | Message.objects.filter(message=user)
+        queryset = Message.objects.filter(conversation__participants=self.request.user)
+
+         # Filtrer par conversation_id si présent dans les paramètres de requête
+        conversation_id = self.request.query_params.get('conversation_id')
+        if conversation_id:
+            try:
+                conversation = Conversation.objects.get(id=conversation_id)
+                if self.request.user not in conversation.pariticoants.all():
+                    raise PermissionDenied("You are not a participant of this conversation.")
+                queryset = queryset.filter(conversation=conversation)
+            except Conversation.DoesNotExist:
+                return Message.objects.none()
+
+        return queryset 
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
