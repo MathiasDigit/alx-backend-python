@@ -40,7 +40,5 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
 
-
-
-
+["HTTP_403_FORBIDDEN"]
     
