@@ -7,7 +7,7 @@ services:
     restart: always
     env_file: .env
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_DB: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -20,7 +20,7 @@ services:
     container_name: messaging_web
     build:
        context: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
