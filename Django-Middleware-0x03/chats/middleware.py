@@ -13,7 +13,7 @@ class RequestLoggingMiddleware:
         logger.info(f"{datetime.now()} - User: {user} - path: {request.path}")
         return self.get_response(request)
     
-class RestrictAccesByTimeMiddleware:
+class RestrictAccessByTimeMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
