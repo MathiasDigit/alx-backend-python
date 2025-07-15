@@ -8,6 +8,8 @@ from .filters import MessageFilter
 from .pagination import CustomPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -41,3 +43,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     
+
+@api_view(['GET'])
+def protected_view(request):
+    return Response({"message": "Welcome, you have access to this resource."})

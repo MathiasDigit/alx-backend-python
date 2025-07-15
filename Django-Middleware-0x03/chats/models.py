@@ -3,10 +3,17 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('moderator', 'Moderator'),
+        ('user', 'User'),
+    ]
     id = models.BigAutoField(primary_key=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='user')
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     status = models.CharField(max_length=255, blank=True, null=True)
+
 
     
 class Conversation(models.Model):

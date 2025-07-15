@@ -63,4 +63,22 @@ class OffensiveLanguageMiddleware:
         if x_forwarded_for:
             return x_forwarded_for.split(',')[0]
         return request.META.get('REMOTE_ADDR')
+    
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response =  get_response
+
+    def __call__(self, request):
+        user =  request.user
+
+        if user.is_authenticated:
+            # Checks if the user's role is admin or moderator
+            if not (user.is_superuser or getattr(user, 'role', '') in ['admin', 'moderator']):
+                return HttpResponseForbidden("Access reserved for administrators or moderators.")
+            
+        else:
+            # User is not logged in
+            return HttpResponseForbidden("Authentication required.")
+        
+        return self.get_response(request)
 
