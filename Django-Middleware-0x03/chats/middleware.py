@@ -1,5 +1,6 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from django.http import HttpResponseForbidden
+from collections import defaultdict
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,7 +21,7 @@ class RestrictAccessByTimeMiddleware:
     def __call__(self, request):
         current_time = datetime.now().time()
 
-        start_time = time(18, 0)
+        start_time = time(00, 0)
         end_time = time(21, 0)
 
         if not (start_time <= current_time <= end_time):
@@ -28,3 +29,38 @@ class RestrictAccessByTimeMiddleware:
 "Access prohibited outside authorized hours (6 p.m. to 9 p.m.).")
         
         return self.get_response(request)
+    
+class OffensiveLanguageMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.ip_message_log = defaultdict(list)
+        self.message_limit = 5
+        self.time_window = timedelta(minutes=1) 
+
+    def __call__(self, request):
+        if request.method == 'POST':
+            ip_address = self.get_ip(request)
+            now = datetime.now()
+
+             # Cleaning up old queries
+            self.ip_message_log[ip_address] = [
+                ts for ts in self.ip_message_log[ip_address]
+                if now - ts < self.time_window
+            ]
+
+            # Limit check
+            if len(self.ip_message_log[ip_address]) >= self.message_limit:
+                return HttpResponseForbidden("Too many messages sent. Wait a minute.")
+            
+            # Saving the new message
+            self.ip_message_log[ip_address].append(now)
+
+        return self.get_response(request)
+     
+    def get_ip(self, request):
+        """Gets the client's IP address"""
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            return x_forwarded_for.split(',')[0]
+        return request.META.get('REMOTE_ADDR')
+
