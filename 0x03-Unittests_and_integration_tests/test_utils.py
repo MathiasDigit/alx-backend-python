@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""A test module to test the utils.access_nested_map function."""
+"""A test module to test functions from the utils module."""
+
 from parameterized import parameterized
 import unittest
 from utils import access_nested_map
 from unittest.mock import patch, Mock
 from utils import get_json, memoize
 
+
 class TestAccessNestedMap(unittest.TestCase):
-    """A test class to test access_nested_map function."""
+    """Test class for access_nested_map function."""
+
     @parameterized.expand(
         [
             ({"a": 1}, ("a",), 1),
@@ -16,24 +19,29 @@ class TestAccessNestedMap(unittest.TestCase):
         ]
     )
     def test_access_nested_map(self, nested_map, path, expected):
+        """Test access_nested_map returns expected output."""
         self.assertEqual(access_nested_map(nested_map, path), expected)
-    
+
     @parameterized.expand([
         ({}, ("a",), KeyError),
         ({"a": 1}, ("a", "b"), KeyError)
     ])
     def test_access_nested_map_exception(self, nested_map, path, expected):
+        """Test access_nested_map raises KeyError on bad path."""
         with self.assertRaises(KeyError) as context:
             access_nested_map(nested_map, path)
-            self.assertEqual(path, str(context.exception))
+        self.assertEqual(str(context.exception), f"'{path[-1]}'")
+
 
 class TestGetJson(unittest.TestCase):
-    """This class uses mocks a function."""
+    """Test class for get_json using mocked requests."""
+
     @parameterized.expand([
         ('http://example.com', {'payload': True}),
         ('http://holberton.io', {'payload': False})
     ])
     def test_get_json(self, url, expected):
+        """Test get_json returns expected dictionary from URL."""
         with patch('utils.requests.get') as mock_get:
             def mock_behaviour(url):
                 response = Mock()
@@ -45,6 +53,7 @@ class TestGetJson(unittest.TestCase):
                     return response
                 response.json.return_value = ValueError('error no value')
                 return response
+
             mock_get.side_effect = mock_behaviour
             output = get_json(url)
             self.assertEqual(output, expected)
@@ -74,4 +83,4 @@ class TestMemoize(unittest.TestCase):
 
             self.assertEqual(result1, 42)
             self.assertEqual(result2, 42)
-            mock_method.assert_called_once()  # Vérifie que a_method est appelée une seule fois
+            mock_method.assert_called_once()
