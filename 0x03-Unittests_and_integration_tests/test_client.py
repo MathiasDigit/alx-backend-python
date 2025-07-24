@@ -124,7 +124,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             else:
                 mock_resp.json.return_value = cls.repos_payload
             return mock_resp
-
         mocked_get.side_effect = side_effect
 
     @classmethod
