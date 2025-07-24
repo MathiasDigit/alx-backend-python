@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
+from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -100,7 +101,14 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-@parameterized_class
+@parameterized_class([
+    {
+        "org_payload": org_payload,
+        "repos_payload": repos_payload,
+        "expected_repos": expected_repos,
+        "apache2_repos": apache2_repos,
+    }
+])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration test for GithubOrgClient.public_repos."""
 
@@ -108,16 +116,15 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         cls.get_patcher = patch('requests.get')
         mocked_get = cls.get_patcher.start()
-        
-        # Mock requests.get().json() to return org_payload or repos_payload depending on URL
-        def side_effect(url, *args, **kwargs):
+        def side_effect(url,
+                        *args, **kwargs):
             mock_resp = MagicMock()
             if url.endswith('/orgs/google'):
                 mock_resp.json.return_value = cls.org_payload
             else:
                 mock_resp.json.return_value = cls.repos_payload
             return mock_resp
-        
+
         mocked_get.side_effect = side_effect
 
     @classmethod
