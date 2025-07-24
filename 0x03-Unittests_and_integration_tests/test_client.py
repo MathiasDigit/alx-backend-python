@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import patch, MagicMock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
-from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -101,31 +100,16 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-# Define fixtures here if you can't import from fixtures.py
-org_payload = {"login": "google", "id": 12345}
-repos_payload = [
-    {"name": "repo1", "license": {"key": "apache-2.0"}},
-    {"name": "repo2", "license": {"key": "mit"}},
-    {"name": "repo3", "license": {"key": "apache-2.0"}},
-]
-expected_repos = ["repo1", "repo2", "repo3"]
-apache2_repos = ["repo1", "repo3"]
-
-
-@parameterized_class([
-    {
-        "org_payload": org_payload,
-        "repos_payload": repos_payload,
-        "expected_repos": expected_repos,
-        "apache2_repos": apache2_repos,
-    }
-])
+@parameterized_class
 class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration test for GithubOrgClient.public_repos."""
+
     @classmethod
     def setUpClass(cls):
         cls.get_patcher = patch('requests.get')
         mocked_get = cls.get_patcher.start()
-
+        
+        # Mock requests.get().json() to return org_payload or repos_payload depending on URL
         def side_effect(url, *args, **kwargs):
             mock_resp = MagicMock()
             if url.endswith('/orgs/google'):
@@ -133,7 +117,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             else:
                 mock_resp.json.return_value = cls.repos_payload
             return mock_resp
-
+        
         mocked_get.side_effect = side_effect
 
     @classmethod
@@ -141,9 +125,13 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher.stop()
 
     def test_public_repos(self):
+        """Test that public_repos returns expected repo names."""
         client = GithubOrgClient("google")
-        self.assertEqual(client.public_repos(), self.expected_repos)
+        repos = client.public_repos()
+        self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
+        """Test that public_repos filters repos by license."""
         client = GithubOrgClient("google")
-        self.assertEqual(client.public_repos(license="apache-2.0"), self.apache2_repos)
+        apache_repos = client.public_repos(license="apache-2.0")
+        self.assertEqual(apache_repos, self.apache2_repos)
