@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
-from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -101,43 +101,37 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-@parameterized_class([
+# Fixtures
+REPOS_FIXTURE = [
     {
-        "org_payload": org_payload,
-        "repos_payload": repos_payload,
-        "expected_repos": expected_repos,
-        "apache2_repos": apache2_repos,
+        "name": "episodes.dart",
+        "license": {"key": "bsd-3-clause"}
+    },
+    {
+        "name": "cpp-netlib",
+        "license": {"key": "apache-2.0"}
     }
-])
-class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration test for GithubOrgClient.public_repos."""
+]
 
-    @classmethod
-    def setUpClass(cls):
-        cls.get_patcher = patch('requests.get')
-        mocked_get = cls.get_patcher.start()
-        def side_effect(url,
-                        *args, **kwargs):
-            mock_resp = MagicMock()
-            if url.endswith('/orgs/google'):
-                mock_resp.json.return_value = cls.org_payload
-            else:
-                mock_resp.json.return_value = cls.repos_payload
-            return mock_resp
-        mocked_get.side_effect = side_effect
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.get_patcher.stop()
+class TestGithubOrgClient(unittest.TestCase):
+    """Test suite for GithubOrgClient"""
 
-    def test_public_repos(self):
-        """Test that public_repos returns expected repo names."""
+    @patch('client.GithubOrgClient._public_repos_json', return_value=REPOS_FIXTURE)
+    def test_public_repos(self, mock_repos):
+        """Test public_repos returns all repo names"""
         client = GithubOrgClient("google")
-        repos = client.public_repos()
-        self.assertEqual(repos, self.expected_repos)
+        expected = ["episodes.dart", "cpp-netlib"]
+        self.assertEqual(client.public_repos(), expected)
 
-    def test_public_repos_with_license(self):
-        """Test that public_repos filters repos by license."""
+    @patch('client.GithubOrgClient._public_repos_json', return_value=REPOS_FIXTURE)
+    def test_public_repos_with_license(self, mock_repos):
+        """Test public_repos filters by license='apache-2.0'"""
         client = GithubOrgClient("google")
-        apache_repos = client.public_repos(license="apache-2.0")
-        self.assertEqual(apache_repos, self.apache2_repos)
+        expected = ["cpp-netlib"]
+        self.assertEqual(client.public_repos(license="apache-2.0"), expected)
+
+
+if __name__ == '__main__':
+    unittest.main()
+
