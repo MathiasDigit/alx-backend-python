@@ -7,7 +7,6 @@ from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 
 
-
 class TestGithubOrgClient(unittest.TestCase):
     """Test class for GithubOrgClient."""
 
@@ -117,14 +116,20 @@ REPOS_FIXTURE = [
 class TestGithubOrgClient(unittest.TestCase):
     """Test suite for GithubOrgClient"""
 
-    @patch('client.GithubOrgClient._public_repos_json', return_value=REPOS_FIXTURE)
+    @patch(
+            'client.GithubOrgClient._public_repos_json',
+            return_value=REPOS_FIXTURE
+             )
     def test_public_repos(self, mock_repos):
         """Test public_repos returns all repo names"""
         client = GithubOrgClient("google")
         expected = ["episodes.dart", "cpp-netlib"]
         self.assertEqual(client.public_repos(), expected)
 
-    @patch('client.GithubOrgClient._public_repos_json', return_value=REPOS_FIXTURE)
+    @patch(
+            'client.GithubOrgClient._public_repos_json',
+            return_value=REPOS_FIXTURE
+            )
     def test_public_repos_with_license(self, mock_repos):
         """Test public_repos filters by license='apache-2.0'"""
         client = GithubOrgClient("google")
@@ -134,4 +139,3 @@ class TestGithubOrgClient(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
