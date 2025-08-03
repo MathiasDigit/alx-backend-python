@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Scale Django app deployment to 3 replicas
+kubectl scale deployment django-deployment --replicas=3
+
+# Wait a few seconds to let new pods start
+sleep 5
+
+# Show all running pods (to verify scaling)
+kubectl get pods
+
+# Load test using wrk (assumes wrk is installed and service exposed)
+wrk -t4 -c100 -d10s http://<127.0.0.1>:<60909>/
+
+# Show CPU and memory usage for pods and nodes
+kubectl top pods
+kubectl top nodes
