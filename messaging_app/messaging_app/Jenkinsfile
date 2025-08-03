@@ -3,7 +3,10 @@ pipeline {
 
     environment {
         GIT_CREDENTIALS_ID = 'github-creds'
-        GIT_BRANCH = 'main'  
+        DOCKERHUB_CREDENTIALS_ID = 'dockerhub-creds'
+        GIT_BRANCH = 'main'
+        IMAGE_NAME = 'yourdockerhubusername/messaging_app'
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -18,7 +21,7 @@ pipeline {
                 sh '''
                 python3 -m venv venv
                 . venv/bin/activate
-                pip3 install -r messaging_app/requirements.txt  # ✅ Chemin complet
+                pip3 install -r messaging_app/requirements.txt
                 '''
             }
         }
@@ -35,6 +38,26 @@ pipeline {
         stage('Archive Results') {
             steps {
                 junit 'report.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                '''
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push $IMAGE_NAME:$IMAGE_TAG
+                    docker logout
+                    '''
+                }
             }
         }
     }
