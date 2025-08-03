@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Deploy blue and green versions
+kubectl apply -f blue_deployment.yaml
+kubectl apply -f green_deployment.yaml
+kubectl apply -f kubeservice.yaml
+
+# Wait for green pods to start
+sleep 5
+
+# Get logs from green deployment pods
+kubectl get pods -l version=green -o name | while read pod
+do
+  echo "Logs from $pod"
+  kubectl logs "$pod"
+done
