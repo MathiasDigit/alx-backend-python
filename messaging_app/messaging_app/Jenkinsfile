@@ -1,27 +1,24 @@
 pipeline {
     agent any
 
-    tools {
-        python 'Python 3'  
-    }
-
     environment {
         GIT_CREDENTIALS_ID = 'github-creds'
+        GIT_BRANCH = 'main'  
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git credentialsId: "${GIT_CREDENTIALS_ID}", url: 'https://github.com/yourname/messaging-app.git'
+                git branch: "${GIT_BRANCH}", credentialsId: "${GIT_CREDENTIALS_ID}", url: 'https://github.com/MathiasDigit/messaging_app.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
                 sh '''
-                virtualenv venv
+                python3 -m venv venv
                 . venv/bin/activate
-                pip install -r requirements.txt
+                pip3 install -r messaging_app/requirements.txt  # ✅ Chemin complet
                 '''
             }
         }
