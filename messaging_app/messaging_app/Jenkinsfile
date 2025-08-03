@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    tools {
+        python 'Python 3'  
+    }
+
+    environment {
+        GIT_CREDENTIALS_ID = 'github-creds'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git credentialsId: "${GIT_CREDENTIALS_ID}", url: 'https://github.com/yourname/messaging-app.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                virtualenv venv
+                . venv/bin/activate
+                pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                . venv/bin/activate
+                pytest --junitxml=report.xml
+                '''
+            }
+        }
+
+        stage('Archive Results') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+}
