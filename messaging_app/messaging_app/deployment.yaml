@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messaging-app-deployment
+spec:
+  replicas: 2  # Le nombre de pods souhaités
+  selector:
+    matchLabels:
+      app: messaging-app
+  template:
+    metadata:
+      labels:
+        app: messaging-app
+    spec:
+    containers:
+           - name: messaging-app-container
+             image: messaging_app-django/messaging_app:latest  # Remplacez par l'image Docker construite et poussée
+             ports:
+                - containerPort: 8000  # Port exposé par l'app Django
+             env:
+                - name: DEBUG
+                  value: "True"  # Optionnel
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging-app-service
+spec:
+  type: ClusterIP  # Service interne uniquement
+  selector:
+    app: messaging-app
+  ports:
+    - protocol: TCP
+      port: 80        # Port utilisé par d'autres services pour se connecter
+      targetPort: 8000  # Port exposé par le container Django
