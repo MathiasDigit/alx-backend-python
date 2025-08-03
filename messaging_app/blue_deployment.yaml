@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
        - name: django
-         image: django-message_app:blue
+         image: django-message_app:2.0
          ports:
         - containerPort: 8000
          

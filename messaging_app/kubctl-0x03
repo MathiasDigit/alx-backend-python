@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Apply updated blue deployment (v2.0 image)
+kubectl apply -f blue_deployment.yaml
+
+# Monitor rollout status
+kubectl rollout status deployment/django-blue
+
+# Continuously send curl requests during rollout to test for disruptions (run in background)
+echo "Testing app availability during update..."
+while true; do curl -s http://127.0.0.1:30001/api/ || echo "FAIL"; sleep 1; done &
+CURL_PID=$!
+
+# Wait for a few seconds to simulate observation period
+sleep 20
+
+# Kill the curl loop
+kill $CURL_PID
+
+# Show final state of pods
+kubectl get pods -l app=django
