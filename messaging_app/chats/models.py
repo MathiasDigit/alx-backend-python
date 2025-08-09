@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser 
 
+["import uuid", "email", "password", "first_name", "last_name"]
 # Create your models here.
 class User(AbstractUser):
-    user_id = models.BigAutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     status = models.CharField(max_length=255, blank=True, null=True)
