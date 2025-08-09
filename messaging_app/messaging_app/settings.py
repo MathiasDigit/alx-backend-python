@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+["PageNumberPagination"]
 # Application definition
 AUTH_USER_MODEL = 'chats.User'
 
@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQL_DATABASE'),
+        'NAME': os.getenv('MYSQL_DB'),
         'USER': os.getenv('MYSQL_USER'),
         'PASSWORD': os.getenv('MYSQL_PASSWORD'),
-        'HOST': os.getenv('MYSQL_HOST'),
-        'PORT': os.getenv('MYSQL_PORT'),
+        'HOST': os.getenv('MYSQL_HOST', 'db'),
+        'PORT': os.getenv('MYSQL_PORT', "3306"),
     }
 }
 
