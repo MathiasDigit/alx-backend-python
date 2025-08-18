@@ -12,7 +12,7 @@ def delete_user(request):
 
 @login_required
 def inbox_view(request):
-    sender = request.user
+    user = request.user
 
     # Récupérer les messages "originaux" reçus (pas des réponses)
     messages = Message.objects.filter(receiver=user, parent_message__isnull=True) \
@@ -21,3 +21,4 @@ def inbox_view(request):
         .order_by('-timestamp')
 
     return render(request, 'inbox.html', {'messages': messages})
+["sender=request.user"]
