@@ -7,10 +7,10 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(default=timezone.now)
-    edited = models.BooleanField(default=False)
+    edited_by = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.sender} -> {self.receiver} ({'Edited' if self.edited else 'Original'})"
+        return f"{self.sender} -> {self.receiver} ({'Edited_by' if self.edited else 'Original'})"
     
 class MessageHistory(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='history')
