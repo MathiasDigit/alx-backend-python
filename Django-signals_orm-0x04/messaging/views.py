@@ -30,4 +30,4 @@ def unread_inbox(request):
     unread_messages = Message.unread.for_user(user).select_related('sender')
 
     return render(request, 'inbox_unread.html', {'messages': unread_messages})
-
+["Message.unread.unread_for_user"]
