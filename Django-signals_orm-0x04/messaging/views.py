@@ -21,4 +21,4 @@ def inbox_view(request):
         .order_by('-timestamp')
 
     return render(request, 'inbox.html', {'messages': messages})
-["sender=request.user"]
+
