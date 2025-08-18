@@ -12,7 +12,7 @@ def delete_user(request):
 
 @login_required
 def inbox_view(request):
-    user = request.user
+    sender = request.user
 
     # Récupérer les messages "originaux" reçus (pas des réponses)
     messages = Message.objects.filter(receiver=user, parent_message__isnull=True) \
