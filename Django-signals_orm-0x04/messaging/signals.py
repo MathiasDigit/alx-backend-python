@@ -1,8 +1,7 @@
-# signals.py
-
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from .models import Message, MessageHistory
+from django.contrib.auth.models import User
+from .models import Message, MessageHistory, MessageHistory
 
 @receiver(pre_save, sender=Message)
 def log_message_edit(sender, instance, **kwargs):
@@ -18,3 +17,10 @@ def log_message_edit(sender, instance, **kwargs):
                 instance.edited = True
         except Message.DoesNotExist:
             pass  # Nouveau message, ne rien faire
+
+@receiver(post_delete, sender=User)
+def clean_user_data(sender, instance, **kwargs):
+    # Les messages et notifications devraient déjà être supprimés via CASCADE.
+    # On nettoie les historiques orphelins si jamais il en reste (par sécurité).
+    Message.objects.filter(message__sender=instance).delete()
+    Message.objects.filter(message__receiver=instance).delete()
