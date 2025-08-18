@@ -2,20 +2,24 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+class UnreadMessagesManager(models.Manager):
+    def for_user(self, user):
+        return self.filter(receiver=user, read=False).only('id', 'sender', 'content', 'timestamp')
+
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(default=timezone.now)
     edited = models.BooleanField(default=False)
-    parent_message = models.ForeignKey(
-        'self', null=True, blank=True,
-        on_delete=models.CASCADE,
-        related_name='replies'
-    )
+    parent_message = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    read = models.BooleanField(default=False)
+
+    objects = models.Manager()  # default manager
+    unread = UnreadMessagesManager()  # custom manager for unread messages
 
     def __str__(self):
-        return f"{self.sender} → {self.receiver} ({'Reply to #' + str(self.parent_message_id) if self.parent_message else 'Original'})"
+        return f"{self.sender} → {self.receiver} {'(read)' if self.read else '(unread)'}"
     
 class MessageHistory(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='history')
